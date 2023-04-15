@@ -1,10 +1,11 @@
 import { promisify } from "node:util";
 import { exec } from "node:child_process";
 import path from "node:path";
+import { ROOT_FOLDER } from "./constants.js";
 
 const promisifiedExec = promisify(exec);
 const options = {
-  cwd: path.join("/Users/agney/code/run-throughs/"),
+  cwd: path.join(ROOT_FOLDER),
 };
 
 export async function executeCommandOnTerminal(command) {

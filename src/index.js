@@ -32,7 +32,7 @@ async function executeTool({ action, input }) {
     case "EXECUTE_TERMINAL":
       return executeCommandOnTerminal(input);
     case "WRITE_FILE":
-      return writeToFile("", "content");
+      return writeToFile(input);
     case "WRITE_CODE":
       return writeCode(input);
     case "PROMPT_USER":
@@ -63,7 +63,7 @@ These are incomplete tasks: ${incompleteTasks}
 
 These are the tools at your disposal to complete the task:
 
-1. EXECUTE_TERMINAL: Execute a command on the terminal. Action Input while choosing this action should be to the command to execute. It will be executed in project folder.
+1. EXECUTE_TERMINAL: Execute a command on the terminal. Action Input while choosing this action should be to the command to execute.
 2. WRITE_FILE: Write a file to the codebase with the given content. Action Input while choosing this action should be of the format {Path to file---Content in the file}.
 3. WRITE_CODE: An AI to write code as you describe. Action Input while choosing this action should be the description of the code to write.
 4. PROMPT_USER: Ask the user for input. Action Input while choosing this action should be the question to ask the user.
@@ -84,6 +84,7 @@ Expected result: the expected result of the action
   console.log(response);
   const extractedCodeFromText = extractCodeFromText(response.message.content);
   const toolResult = await executeTool(extractedCodeFromText);
+  console.log(toolResult);
   return { actionInput: extractedCodeFromText, toolResult };
 }
 
@@ -97,6 +98,7 @@ export default async function generate({
     result,
     taskDescription,
     incompleteTasks: [objective],
+    objective: objective,
   });
   if (actionInput.action === "MORE_TASKS") {
     await generate({
@@ -114,6 +116,7 @@ export default async function generate({
   }
 }
 
-generate(
-  "Create a rails app with a postgresql database and a react frontend to submit and display the form data"
-);
+generate({
+  objective:
+    "Create a Express app with postgres database and NextJS frontend that allows users to create and view posts",
+});
