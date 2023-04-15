@@ -2,60 +2,41 @@ import dotenv from "dotenv";
 import { openAiClient } from "./openAiClient.js";
 import { executeCommandOnTerminal } from "./tools/executeTerminal.js";
 import { writeToFile } from "./tools/writeToFile.js";
+import { writeCode } from "./tools/writeCode.js";
+import { promptUser } from "./tools/promptUser.js";
 
 dotenv.config();
 
-const CODE_WRITING_PROMPT = `
-Your responsibility is to write code. 
+function extractCodeFromText(inputText) {
+  const questionRegex = /Question:\s*(.*)/;
+  const thoughtRegex = /Thought:\s*(.*)/;
+  const actionRegex = /Action:\s*(.*)/;
+  const inputRegex = /Action Input:\s*(.*)/;
 
-Write code for described use case and return the results. Do not write explanations. 
-`;
-
-const TASK_PROMPT = `
-You will be given a task to perform. Performing the task would lead to completing codebase.
-You have certain tools at your disposal to achieve this:
-1. EXECUTE_TERMINAL: Execute a command on the terminal. Action Input while choosing this action should be to the command to execute. It will be executed in project folder.
-2. WRITE_FILE: Write a file to the codebase with the given content. Action Input while choosing this action should be of the format {Path to file---Content in the file}.
-3. WRITE_CODE: An AI to write code as you describe. Action Input while choosing this action should be the description of the code to write.
-4. PROMPT_USER: Ask the user for input. Action Input while choosing this action should be the question to ask the user.
-
-Your output should be in the following format:
-Question: the input question you must answer
-Thought: you should always think about what to do
-Action: the action to take, should be one of [WRITE_FILE, EXECUTE_ON_TERMINAL, WRITE_CODE]
-Action Input: the input to the action
-Expected result: the expected result of the action
-`;
-
-function extractAction(inputText) {
-  const actionRegex = /Action:\s*(\w+)/;
-  const inputRegex = /Action Input:\s*([\w.]+)/;
-
+  const questionMatch = inputText.match(questionRegex);
+  const thoughtMatch = inputText.match(thoughtRegex);
   const actionMatch = inputText.match(actionRegex);
   const inputMatch = inputText.match(inputRegex);
 
   if (actionMatch && inputMatch) {
     const action = actionMatch[1];
     const input = inputMatch[1];
-    return { action, input };
+    return { questionMatch, thoughtMatch, action, input };
   } else {
-    console.log("No action or input found");
+    console.error("No action or input found");
   }
 }
 
 async function executeTool({ action, input }) {
-  console.log({ action, input });
   switch (action) {
     case "EXECUTE_TERMINAL":
-      await executeCommandOnTerminal(input);
-      break;
+      return executeCommandOnTerminal(input);
     case "WRITE_FILE":
-      writeToFile("", "content");
-      break;
+      return writeToFile("", "content");
     case "WRITE_CODE":
-      break;
+      return writeCode(input);
     case "PROMPT_USER":
-      break;
+      return promptUser(input);
     case "MORE_TASKS":
       return input.split("/n");
     default:
@@ -101,18 +82,36 @@ Expected result: the expected result of the action
   });
   const response = completion.data.choices[0];
   console.log(response);
-  const actionInput = extractAction(response.message.content);
-  const toolResult = await executeTool(actionInput);
-  return toolResult;
+  const extractedCodeFromText = extractCodeFromText(response.message.content);
+  const toolResult = await executeTool(extractedCodeFromText);
+  return { actionInput: extractedCodeFromText, toolResult };
 }
 
-export default async function generate(objective) {
-  const tasks = await generateTasks({
-    result: "",
-    taskDescription: "",
+export default async function generate({
+  tasks = [],
+  objective,
+  result = "",
+  taskDescription = "",
+}) {
+  const { actionInput, toolResult } = await generateTasks({
+    result,
+    taskDescription,
     incompleteTasks: [objective],
   });
-  console.log({ tasks });
+  if (actionInput.action === "MORE_TASKS") {
+    await generate({
+      tasks: [...toolResult, ...tasks],
+      objective,
+      result,
+      taskDescription,
+    });
+  } else {
+    await generate({
+      objective,
+      result: toolResult,
+      taskDescription: actionInput.questionMatch ?? actionInput.thoughtMatch,
+    });
+  }
 }
 
 generate(
