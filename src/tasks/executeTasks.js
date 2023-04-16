@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import ora from "ora";
+import process from "node:process";
 import { openAiClient } from "../openAiClient.js";
 import { executeTool } from "../scripts/executeTool.js";
 import { extractCodeFromText } from "../scripts/extractCodeFromText.js";
@@ -37,8 +38,8 @@ Create an action plan to complete objective ${objective}
 
 Pick up the first uncompleted task and try to complete it. 
 
-If it cannot be completed using these tools, break down further into subtasks and return the tasks list in format:
-{action: "MORE_TASKS", input: "Task 1\nTask 2\nTask 3"}
+If it cannot be completed using these tools, break down further into subtasks. 
+If you have achieved the objective, return { "action": "COMPLETE_OBJECTIVE" }
         `,
       },
       ...context,
@@ -48,6 +49,12 @@ If it cannot be completed using these tools, break down further into subtasks an
   ora("Getting AI").succeed();
   const response = completion.data.choices[0];
   console.log(chalk.yellow("Message from assistant"), response.message.content);
+
+  if (extractCodeFromText.action === "COMPLETE_OBJECTIVE") {
+    console.log(chalk.green("Objective completed 🎉"));
+    process.exit();
+  }
+
   try {
     const extractedCodeFromText = extractCodeFromText(response.message.content);
 
