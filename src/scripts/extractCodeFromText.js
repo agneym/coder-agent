@@ -9,7 +9,7 @@ export function extractCodeFromText(inputText) {
   const actionMatch = inputText.match(actionRegex);
   const inputMatch = inputText.match(inputRegex);
 
-  if (actionMatch && inputMatch) {
+  if (actionMatch) {
     const action = actionMatch[1];
     const input = inputMatch[1];
     return { questionMatch, thoughtMatch, action, input };

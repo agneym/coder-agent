@@ -14,7 +14,7 @@ export async function executeTool({ action, input }) {
     case "PROMPT_USER":
       return promptUser(input);
     case "MORE_TASKS":
-      return input.split("/n");
+      return "Please split this task into subtasks";
     default:
       break;
   }
