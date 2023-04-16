@@ -1,8 +1,11 @@
+import chalk from "chalk";
+import ora from "ora";
 import { openAiClient } from "../openAiClient.js";
 import { executeTool } from "../scripts/executeTool.js";
 import { extractCodeFromText } from "../scripts/extractCodeFromText.js";
 
 export async function executeTasks({ objective, context = [] }) {
+  ora("Getting AI").start();
   const completion = await openAiClient.createChatCompletion({
     model: "gpt-4",
     messages: [
@@ -42,8 +45,9 @@ If it cannot be completed using these tools, break down further into subtasks an
     ],
     temperature: 0.1,
   });
+  ora("Getting AI").succeed();
   const response = completion.data.choices[0];
-  console.log("Message from assistant", response.message.content);
+  console.log(chalk.yellow("Message from assistant"), response.message.content);
   try {
     const extractedCodeFromText = extractCodeFromText(response.message.content);
 
@@ -66,7 +70,10 @@ If it cannot be completed using these tools, break down further into subtasks an
       });
     }
     if (extractedCodeFromText.action) {
-      console.log(`Running the tool ${extractedCodeFromText.action}`);
+      console.log(
+        `Running the tool`,
+        chalk.blue.bold(extractedCodeFromText.action)
+      );
       const toolResult = await executeTool(extractedCodeFromText);
       await executeTasks({
         objective,
