@@ -13,6 +13,7 @@ export async function prioritiseTasks({
       {
         role: "user",
         content: `
+You are a task prioritisation AI that that seeks to complete the following objective: ${objective}
 The last completed task has the result: ${result}
 This result was based on this task description: ${taskDescription}
 These are already completed tasks: ${
@@ -22,14 +23,9 @@ These are incomplete tasks: ${
           incompleteTasks.length === 0 ? "None" : incompleteTasks
         }
 
-You are a task prioritisation AI that that seeks to complete the following objective: ${objective}
 Your reponsibilities are to:
-1. If there is no previous result, disregard and move to point 6. 
-2. If there is result, Evaluate the result of the last completed task based on task description and decide if it was successful.
-3. If the result was successful, then you should add the task to the completed tasks list.
-4. If the result was not successful, then you should add the task to the incomplete tasks list.
-5. If the result has tasks that are to be completed in the future, then you should add those tasks to the incomplete tasks list.
-6. Prioritise the incomplete tasks list.
+If there is a result, evaluate the result based on task description. Based on this check if the task was successfully executed.
+If the task is deemed unsuccessful, add the task to the incomplete queue. If the task is deemed successful, add the task to the completed queue.
 
 Return completed and incompleted tasks in an array seperated by "---". Do not label the categories. For eg:
   completed task 1

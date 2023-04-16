@@ -40,6 +40,16 @@ export default async function generate({
     console.log("Completed");
     return toolResult;
   }
+  if (actionInput.action === "MORE_TASKS") {
+    console.log("actionInput", actionInput.input);
+    return await generate({
+      objective,
+      taskDescription: nextTask,
+      completedTasks: newCompletedTasks,
+      incompletedTasks: [...actionInput.input, ...newIncompleteTasks],
+      result: null,
+    });
+  }
   if (!actionInput.action) {
     return await generate({
       objective,
