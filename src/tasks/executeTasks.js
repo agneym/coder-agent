@@ -22,7 +22,7 @@ Here is the task that you have to complete: ${taskDescription}
 These are the tools at your disposal to complete the task:
 
 1. EXECUTE_TERMINAL: Execute a command on the terminal. Action Input while choosing this action should be to the command to execute.
-2. WRITE_FILE: Write a file to the codebase with the given content. Action Input while choosing this action should be of the format {Path to file---Content in the file}.
+2. WRITE_FILE: Write a file to the codebase with the given content. To write a file, two inputs are necessary - Path to file and the content to write to the file. The path to the file should be relative to the root of the codebase. Action Input while choosing this action should be the path to the file and the content to write to the file seperated by '---'. For eg: src/index.js---console.log("Hello World")
 3. WRITE_CODE: An AI to write code as you describe. Action Input while choosing this action should be the description of the code to write.
 4. PROMPT_USER: Ask the user for input if task is ambigous. Action Input while choosing this action should be the question to ask the user.
 5. MORE_TASKS: If the task is too big to completed in one go, use this tool. Action Input is not necessary for this tool.
