@@ -29,11 +29,10 @@ These are the tools at your disposal to complete the task:
 6. FINAL_RESULT: If the task is completed, use this tool. Action Input is not necessary for this tool.
  
 Your output should be in the following format:
-Question: the input question you must answer
+
 Thought: you should always think about what to do
 Action: the action to take, should be one of [WRITE_FILE, EXECUTE_ON_TERMINAL, WRITE_CODE, PROMPT_USER, MORE_TASKS, FINAL_RESULT]
-Expected result: the expected result of the action
-Action Input: the input to the action
+Action Input: the input to the action, should always be in the format specified by the corresponding tool.
 `,
       },
     ],
@@ -42,10 +41,15 @@ Action Input: the input to the action
   const response = completion.data.choices[0];
   console.log(response.message.content);
   const extractedCodeFromText = extractCodeFromText(response.message.content);
-  console.log(
-    `Running the tool ${extractedCodeFromText.action} with input ${extractedCodeFromText.input}...}`
-  );
-  const toolResult = await executeTool(extractedCodeFromText);
-  console.log(toolResult);
-  return { actionInput: extractedCodeFromText, toolResult };
+
+  if (extractedCodeFromText.action) {
+    console.log(
+      `Running the tool ${extractedCodeFromText.action} with input ${extractedCodeFromText.input}}`
+    );
+    const toolResult = await executeTool(extractedCodeFromText);
+    console.log(toolResult);
+    return { actionInput: extractedCodeFromText, toolResult };
+  } else {
+    return { actionInput: extractedCodeFromText, toolResult: "" };
+  }
 }

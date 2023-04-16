@@ -21,9 +21,12 @@ export default async function generate({
     completeTasks: completedTasks,
     incompleteTasks: incompletedTasks,
   });
-  const nextTask = newIncompleteTasks.shift();
+  let nextTask = newIncompleteTasks.shift();
   if (!nextTask) {
-    console.log("Ran out of tasks!", { newCompletedTasks, newIncompleteTasks });
+    console.log("Ran out of tasks!", {
+      newCompletedTasks,
+      newIncompleteTasks,
+    });
     return null;
   }
   const { actionInput, toolResult } = await executeTasks({
@@ -37,16 +40,21 @@ export default async function generate({
     console.log("Completed");
     return toolResult;
   }
+  if (!actionInput.action) {
+    nextTask = actionInput.thought;
+  }
+
   return await generate({
     objective,
-    taskDescription,
+    taskDescription: nextTask,
     completedTasks: newCompletedTasks,
     incompletedTasks: newIncompleteTasks,
     result: toolResult,
   });
 }
 
-const OBJECTIVE = "Create a ReactJS app that displays a list of movies";
+const OBJECTIVE =
+  "Create a JavaScript library. The default export function should return a dad joke when invoked.";
 generate({
   objective: OBJECTIVE,
   incompletedTasks: [OBJECTIVE],
