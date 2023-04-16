@@ -25,7 +25,7 @@ These are incomplete tasks: ${
 You are a task prioritisation AI that that seeks to complete the following objective: ${objective}
 Your reponsibilities are to:
 1. If there is no previous result, disregard and move to point 6. 
-2. If there is result, Evaluate the result of the last completed task and decide if it was successful.
+2. If there is result, Evaluate the result of the last completed task based on task description and decide if it was successful.
 3. If the result was successful, then you should add the task to the completed tasks list.
 4. If the result was not successful, then you should add the task to the incomplete tasks list.
 5. If the result has tasks that are to be completed in the future, then you should add those tasks to the incomplete tasks list.

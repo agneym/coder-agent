@@ -17,7 +17,6 @@ export async function executeTasks({
 You are an task completion AI that that seeks to complete the following objective: ${objective}
 These are already completed tasks: ${completedTasks}
 These are incomplete tasks: ${incompleteTasks}
-Here is the task that you have to complete: ${taskDescription}
 
 These are the tools at your disposal to complete the task:
 
@@ -28,7 +27,11 @@ These are the tools at your disposal to complete the task:
 5. MORE_TASKS: If the task is too big to completed in one go, use this tool. Action Input is not necessary for this tool.
 6. FINAL_RESULT: If the task is completed, use this tool. Action Input is not necessary for this tool.
  
-If the task is too big to be completed in one go, you can use the tool MORE_TASKS to break the task into smaller tasks. If the task is completed, you can use the tool FINAL_RESULT to return the result.
+Here is the task that you have to complete: ${taskDescription}
+If the task cannot be completed entirely by using [EXECUTE_TERMINAL, WRITE_FILE, WRITE_CODE, PROMPT_USER, FINAL_RESULT], choose MORE_TASKS.
+If the task is completed, choose FINAL_RESULT.
+Keep in mind the language and libraries choosen for achiving the objective from completed tasks. 
+
 Your output should be in the following format:
 
 Thought: you should always think about what to do
@@ -45,7 +48,7 @@ Action Input: the input to the action, should always be in the format specified 
 
   if (extractedCodeFromText.action) {
     console.log(
-      `Running the tool ${extractedCodeFromText.action} with input ${extractedCodeFromText.input}}`
+      `Running the tool ${extractedCodeFromText.action} with input ${extractedCodeFromText.input}`
     );
     const toolResult = await executeTool(extractedCodeFromText);
     console.log(toolResult);
