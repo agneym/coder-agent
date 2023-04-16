@@ -21,7 +21,7 @@ export default async function generate({
     completeTasks: completedTasks,
     incompleteTasks: incompletedTasks,
   });
-  let nextTask = newIncompleteTasks.shift();
+  const nextTask = newIncompleteTasks.shift();
   if (!nextTask) {
     console.log("Ran out of tasks!", {
       newCompletedTasks,
@@ -41,7 +41,13 @@ export default async function generate({
     return toolResult;
   }
   if (!actionInput.action) {
-    nextTask = actionInput.thought;
+    return await generate({
+      objective,
+      taskDescription: nextTask,
+      completedTasks: newCompletedTasks,
+      incompletedTasks: [action.thought, ...newIncompleteTasks],
+      result: null,
+    });
   }
 
   return await generate({

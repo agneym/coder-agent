@@ -22,7 +22,7 @@ These are incomplete tasks: ${
           incompleteTasks.length === 0 ? "None" : incompleteTasks
         }
 
-Based on the result generate and prioritise the next tasks to complete the objective: ${objective}
+Evaluate the result to check if the task is successful and generate and prioritise the next tasks to complete the objective: ${objective}
 Return completed and incompleted tasks in an array seperated by "---". Do not label the categories. For eg:
   completed task 1
   completed task 2
