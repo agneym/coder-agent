@@ -45,7 +45,7 @@ export default async function generate({
       objective,
       taskDescription: nextTask,
       completedTasks: newCompletedTasks,
-      incompletedTasks: [action.thought, ...newIncompleteTasks],
+      incompletedTasks: [actionInput.thought, ...newIncompleteTasks],
       result: null,
     });
   }
@@ -59,8 +59,16 @@ export default async function generate({
   });
 }
 
-const OBJECTIVE =
-  "Create a JavaScript library. The default export function should return a dad joke when invoked.";
+const OBJECTIVE = `
+Create a NodeJS Express API that can store and retrieve dad jokes.
+The API should have the following endpoints:
+1. GET /jokes - Returns all the jokes
+2. GET /jokes/:id - Returns the joke with the given id
+3. POST /jokes - Creates a new joke
+4. PUT /jokes/:id - Updates the joke with the given id
+5. DELETE /jokes/:id - Deletes the joke with the given id
+Use Postgres database to store the jokes.
+`.replace(/\n/g, " ");
 generate({
   objective: OBJECTIVE,
   incompletedTasks: [OBJECTIVE],

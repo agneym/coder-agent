@@ -28,6 +28,7 @@ These are the tools at your disposal to complete the task:
 5. MORE_TASKS: If the task is too big to completed in one go, use this tool. Action Input is not necessary for this tool.
 6. FINAL_RESULT: If the task is completed, use this tool. Action Input is not necessary for this tool.
  
+If the task is too big to be completed in one go, you can use the tool MORE_TASKS to break the task into smaller tasks. If the task is completed, you can use the tool FINAL_RESULT to return the result.
 Your output should be in the following format:
 
 Thought: you should always think about what to do
