@@ -11,34 +11,37 @@ export default async function generate({
   result = "",
   taskDescription = "",
 }) {
-  const { completeTasks, incompleteTasks } = await prioritiseTasks({
+  const {
+    completedTasks: newCompletedTasks,
+    incompleteTasks: newIncompleteTasks,
+  } = await prioritiseTasks({
     objective,
     result,
     taskDescription,
-    completedTasks: completedTasks,
-    incompletedTasks: incompletedTasks,
+    completeTasks: completedTasks,
+    incompleteTasks: incompletedTasks,
   });
-  const nextTask = incompleteTasks.shift();
+  const nextTask = newIncompleteTasks.shift();
   if (!nextTask) {
-    console.log("Ran out of tasks!", { completeTasks, incompleteTasks });
+    console.log("Ran out of tasks!", { newCompletedTasks, newIncompleteTasks });
     return null;
   }
   const { actionInput, toolResult } = await executeTasks({
     objective,
     taskDescription: nextTask,
-    completedTasks: completeTasks,
-    incompleteTasks: incompleteTasks,
+    completedTasks: newCompletedTasks,
+    incompleteTasks: newIncompleteTasks,
   });
 
   if (actionInput.action === "FINAL_RESULT") {
     console.log("Completed");
     return toolResult;
   }
-  generate({
+  return await generate({
     objective,
     taskDescription,
-    completedTasks: completeTasks,
-    incompletedTasks: incompleteTasks,
+    completedTasks: newCompletedTasks,
+    incompletedTasks: newIncompleteTasks,
     result: toolResult,
   });
 }

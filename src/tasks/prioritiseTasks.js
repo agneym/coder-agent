@@ -4,7 +4,7 @@ export async function prioritiseTasks({
   objective,
   result,
   taskDescription,
-  completedTasks,
+  completeTasks,
   incompleteTasks,
 }) {
   const completion = await openAiClient.createChatCompletion({
@@ -15,7 +15,7 @@ export async function prioritiseTasks({
         content: `
 The last completed task has the result: ${result}
 This result was based on this task description: ${taskDescription}
-These are already completed tasks: ${completedTasks}
+These are already completed tasks: ${completeTasks}
 These are incomplete tasks: ${incompleteTasks}
 
 Based on the result generate and prioritise the next tasks to complete the objective: ${objective}
@@ -33,9 +33,9 @@ Return completed and incompleted tasks in an array seperated by "---". For eg:
   const response = completion.data.choices[0];
   const content = response.message.content;
   console.log("Prioritised tasks:", content);
-  const [completedTasks, incompleteTasks] = content.split("---");
+  const [newCompleteTasks, newIncompleteTasks] = content.split("---");
   return {
-    completedTasks: completedTasks.split("\n"),
-    incompleteTasks: incompleteTasks.split("\n"),
+    completedTasks: newCompleteTasks.split("\n"),
+    incompleteTasks: newIncompleteTasks.split("\n"),
   };
 }
