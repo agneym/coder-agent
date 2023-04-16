@@ -1,1 +1,5 @@
-export const ROOT_FOLDER = "/Users/agney/code/run-throughs/ai-magic";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+export const ROOT_FOLDER = process.env.PATH_TO_PROJECT_FOLDER;
